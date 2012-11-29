@@ -1,0 +1,2 @@
+require 'extjs/rails'
+

@@ -11,19 +11,30 @@ rescue Bundler::BundlerError => e
 end
 require 'rake'
 
-require 'jeweler'
-Jeweler::Tasks.new do |gem|
-  # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
-  gem.name = "extjs-rails"
-  gem.homepage = "http://github.com/probonogeek/extjs-rails"
-  gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
-  gem.email = "skellogg@probonogeek.org"
-  gem.authors = ["Sean Kellogg"]
-  # dependencies defined in Gemfile
+desc "update extjs source files"
+task :update do
+
+  $stdout.puts "Updating vendor files from ExtJS source..."
+  FileUtils.rm Dir.glob('/home/niles/dev/extjs-rails/vendor/assets/javascripts/*')
+  FileUtils.rm Dir.glob('/home/niles/dev/extjs-rails/vendor/assets/stylesheets/*')
+  FileUtils.rm_r Dir.glob('/home/niles/dev/extjs-rails/vendor/assets/images/*')
+
+  ['ext-all-debug.js','ext-all-dev.js','ext-all.js'].each do |file|
+    FileUtils.cp "/home/niles/dev/extjs/#{file}", "/home/niles/dev/extjs-rails/vendor/assets/javascripts/"
+  end
+
+  FileUtils.cp Dir.glob('/home/niles/dev/extjs/resources/css/*'), "/home/niles/dev/extjs-rails/vendor/assets/stylesheets/"
+
+  Dir.glob('/home/niles/dev/extjs-rails/vendor/assets/stylesheets/*').each do |css_file|
+    css = File.read(css_file)
+    modifed_css = css.gsub(/url\('..\/..\/resources\/themes\/images\/(.*?)'\)/,"url('<%= asset_path '\\1' %>')")
+    File.open(css_file, "w") {|file| file.write(modifed_css) }
+  end
+
+
+  FileUtils.cp_r Dir.glob('/home/niles/dev/extjs/resources/themes/images/*'), "/home/niles/dev/extjs-rails/vendor/assets/images/"
+
 end
-Jeweler::RubygemsDotOrgTasks.new
 
 require 'rspec/core'
 require 'rspec/core/rake_task'
