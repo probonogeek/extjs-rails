@@ -23,7 +23,10 @@ task :update do
     FileUtils.cp "/home/niles/dev/extjs/#{file}", "/home/niles/dev/extjs-rails/vendor/assets/javascripts/"
   end
 
-  FileUtils.cp Dir.glob('/home/niles/dev/extjs/resources/css/*'), "/home/niles/dev/extjs-rails/vendor/assets/stylesheets/"
+#   FileUtils.cp Dir.glob('/home/niles/dev/extjs/resources/css/*'), "/home/niles/dev/extjs-rails/vendor/assets/stylesheets/"
+  Dir.glob('/home/niles/dev/extjs/resources/css/*').each do |css_file|
+    FileUtils.cp css_file, "/home/niles/dev/extjs-rails/vendor/assets/stylesheets/#{File.basename( css_file )}.erb"
+  end
 
   Dir.glob('/home/niles/dev/extjs-rails/vendor/assets/stylesheets/*').each do |css_file|
     css = File.read(css_file)
